@@ -186,13 +186,11 @@ class Server
             $name = null;
             switch ($answer->getType()) {
                 case RecordTypeEnum::TYPE_NS:
-                    $name = $answer->getRdata();
+                case RecordTypeEnum::TYPE_SRV:
+                    $name = $answer->getRdata()->getTarget();
                     break;
                 case RecordTypeEnum::TYPE_MX:
-                    $name = $answer->getRdata()['exchange'];
-                    break;
-                case RecordTypeEnum::TYPE_SRV:
-                    $name = $answer->getRdata()['target'];
+                    $name = $answer->getRdata()->getExchange();
                     break;
             }
 

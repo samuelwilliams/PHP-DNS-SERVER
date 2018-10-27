@@ -2,7 +2,6 @@
 
 namespace yswery\DNS;
 
-
 class Rdata
 {
     /**
@@ -114,6 +113,7 @@ class Rdata
 
     /**
      * @param string $mname
+     *
      * @return Rdata
      */
     public function setMname(string $mname): Rdata
@@ -137,6 +137,7 @@ class Rdata
 
     /**
      * @param string $rname
+     *
      * @return Rdata
      */
     public function setRname(string $rname): Rdata
@@ -160,6 +161,7 @@ class Rdata
 
     /**
      * @param int $serial
+     *
      * @return Rdata
      */
     public function setSerial(int $serial): Rdata
@@ -167,6 +169,7 @@ class Rdata
         $this->allowed([RecordTypeEnum::TYPE_SOA], 'serial');
 
         $this->serial = $serial;
+
         return $this;
     }
 
@@ -182,12 +185,14 @@ class Rdata
 
     /**
      * @param int $refresh
+     *
      * @return Rdata
      */
     public function setRefresh(int $refresh): Rdata
     {
         $this->allowed([RecordTypeEnum::TYPE_SOA], 'refresh');
         $this->refresh = $refresh;
+
         return $this;
     }
 
@@ -203,6 +208,7 @@ class Rdata
 
     /**
      * @param int $retry
+     *
      * @return Rdata
      */
     public function setRetry(int $retry): Rdata
@@ -210,6 +216,7 @@ class Rdata
         $this->allowed([RecordTypeEnum::TYPE_SOA], 'retry');
 
         $this->retry = $retry;
+
         return $this;
     }
 
@@ -225,6 +232,7 @@ class Rdata
 
     /**
      * @param int $expire
+     *
      * @return Rdata
      */
     public function setExpire(int $expire): Rdata
@@ -232,6 +240,7 @@ class Rdata
         $this->allowed([RecordTypeEnum::TYPE_SOA], 'expire');
 
         $this->expire = $expire;
+
         return $this;
     }
 
@@ -247,6 +256,7 @@ class Rdata
 
     /**
      * @param int $minimum
+     *
      * @return Rdata
      */
     public function setMinimum(int $minimum): Rdata
@@ -254,6 +264,7 @@ class Rdata
         $this->allowed([RecordTypeEnum::TYPE_SOA], 'minimum');
 
         $this->minimum = $minimum;
+
         return $this;
     }
 
@@ -269,13 +280,19 @@ class Rdata
 
     /**
      * @param string $address
+     *
      * @return Rdata
      */
     public function setAddress(string $address): Rdata
     {
         $this->allowed([RecordTypeEnum::TYPE_A, RecordTypeEnum::TYPE_AAAA], 'address');
 
+        if (!filter_var($address, FILTER_VALIDATE_IP)) {
+            throw new \InvalidArgumentException(sprintf('The IP address "%s" is invalid.', $address));
+        }
+
         $this->address = $address;
+
         return $this;
     }
 
@@ -289,6 +306,7 @@ class Rdata
             RecordTypeEnum::TYPE_DNAME,
             RecordTypeEnum::TYPE_PTR,
             RecordTypeEnum::TYPE_NS,
+            RecordTypeEnum::TYPE_SRV,
         ], 'target');
 
         return $this->target;
@@ -296,6 +314,7 @@ class Rdata
 
     /**
      * @param string $target
+     *
      * @return Rdata
      */
     public function setTarget(string $target): Rdata
@@ -305,6 +324,7 @@ class Rdata
             RecordTypeEnum::TYPE_DNAME,
             RecordTypeEnum::TYPE_PTR,
             RecordTypeEnum::TYPE_NS,
+            RecordTypeEnum::TYPE_SRV,
         ], 'target');
 
         $this->target = $target;
@@ -324,6 +344,7 @@ class Rdata
 
     /**
      * @param int $preference
+     *
      * @return Rdata
      */
     public function setPreference(int $preference): Rdata
@@ -331,6 +352,7 @@ class Rdata
         $this->allowed([RecordTypeEnum::TYPE_MX], 'preference');
 
         $this->preference = $preference;
+
         return $this;
     }
 
@@ -346,6 +368,7 @@ class Rdata
 
     /**
      * @param string $exchange
+     *
      * @return Rdata
      */
     public function setExchange(string $exchange): Rdata
@@ -353,6 +376,7 @@ class Rdata
         $this->allowed([RecordTypeEnum::TYPE_MX], 'exchange');
 
         $this->exchange = $exchange;
+
         return $this;
     }
 
@@ -368,6 +392,7 @@ class Rdata
 
     /**
      * @param string $text
+     *
      * @return Rdata
      */
     public function setText(string $text): Rdata
@@ -379,6 +404,7 @@ class Rdata
         }
 
         $this->text = $text;
+
         return $this;
     }
 
@@ -394,6 +420,7 @@ class Rdata
 
     /**
      * @param int $priority
+     *
      * @return Rdata
      */
     public function setPriority(int $priority): Rdata
@@ -401,6 +428,7 @@ class Rdata
         $this->allowed([RecordTypeEnum::TYPE_SRV], 'priority');
 
         $this->priority = $priority;
+
         return $this;
     }
 
@@ -416,6 +444,7 @@ class Rdata
 
     /**
      * @param int $weight
+     *
      * @return Rdata
      */
     public function setWeight(int $weight): Rdata
@@ -423,6 +452,7 @@ class Rdata
         $this->allowed([RecordTypeEnum::TYPE_SRV], 'weight');
 
         $this->weight = $weight;
+
         return $this;
     }
 
@@ -438,6 +468,7 @@ class Rdata
 
     /**
      * @param int $port
+     *
      * @return Rdata
      */
     public function setPort(int $port): Rdata
@@ -445,6 +476,7 @@ class Rdata
         $this->allowed([RecordTypeEnum::TYPE_SRV], 'port');
 
         $this->port = $port;
+
         return $this;
     }
 

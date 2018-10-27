@@ -44,9 +44,9 @@ class SystemResolverTest extends TestCase
 
         $resolver = new SystemResolver();
 
-        $this->assertEquals($expectation1, $resolver->getAnswer([$query1])[0]->getRdata());
-        $this->assertEquals($expectation2, $resolver->getAnswer([$query2])[0]->getRdata());
-        $this->assertEquals($expectation3, $resolver->getAnswer([$query3])[0]->getRdata());
-        $this->assertEquals($expectation4, $resolver->getAnswer([$query4])[0]->getRdata());
+        $this->assertEquals($expectation1, $resolver->getAnswer([$query1])[0]->getRdata()->getAddress());
+        $this->assertEquals($expectation2, $resolver->getAnswer([$query2])[0]->getRdata()->getAddress());
+        $this->assertEquals($expectation3, $resolver->getAnswer([$query3])[0]->getRdata()->getAddress());
+        $this->assertEquals($expectation4, $resolver->getAnswer([$query4])[0]->getRdata()->getAddress());
     }
 }

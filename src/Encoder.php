@@ -53,44 +53,35 @@ class Encoder
     }
 
     /**
-     * @param int          $type
-     * @param string|array $rdata
+     * @param Rdata $rdata
      *
      * @return string
      *
      * @throws UnsupportedTypeException|\InvalidArgumentException
      */
-    public static function encodeRdata(int $type, $rdata): string
+    public static function encodeRdata(Rdata $rdata): string
     {
-        switch ($type) {
+        switch ($rdata->getType()) {
             case RecordTypeEnum::TYPE_A:
             case RecordTypeEnum::TYPE_AAAA:
-                if (!filter_var($rdata, FILTER_VALIDATE_IP)) {
-                    throw new \InvalidArgumentException(sprintf('The IP address "%s" is invalid.', $rdata));
-                }
-
-                return inet_pton($rdata);
+                return inet_pton($rdata->getAddress());
             case RecordTypeEnum::TYPE_NS:
             case RecordTypeEnum::TYPE_CNAME:
+            case RecordTypeEnum::TYPE_DNAME:
             case RecordTypeEnum::TYPE_PTR:
-                return self::encodeDomainName($rdata);
+                return self::encodeDomainName($rdata->getTarget());
             case RecordTypeEnum::TYPE_SOA:
                 return self::encodeSOA($rdata);
             case RecordTypeEnum::TYPE_MX:
-                return pack('n', (int) $rdata['preference']).self::encodeDomainName($rdata['exchange']);
+                return pack('n', $rdata->getPreference()).self::encodeDomainName($rdata->getExchange());
             case RecordTypeEnum::TYPE_TXT:
-                $rdata = substr($rdata, 0, 255);
-
-                return chr(strlen($rdata)).$rdata;
+                return chr(strlen($rdata->getText())).$rdata->getText();
             case RecordTypeEnum::TYPE_SRV:
-                return pack('nnn', (int) $rdata['priority'], (int) $rdata['weight'], (int) $rdata['port']).
-                    self::encodeDomainName($rdata['target']);
-            case RecordTypeEnum::TYPE_AXFR:
-            case RecordTypeEnum::TYPE_ANY:
-                return '';
+                return pack('nnn', $rdata->getPriority(), $rdata->getWeight(), $rdata->getPort()).
+                    self::encodeDomainName($rdata->getTarget());
             default:
                 throw new UnsupportedTypeException(
-                    sprintf('Record type "%s" is not a supported type.', RecordTypeEnum::getName($type))
+                    sprintf('Record type "%s" is not a supported type.', RecordTypeEnum::getName($rdata->getType()))
                 );
         }
     }
@@ -113,7 +104,7 @@ class Encoder
                 continue;
             }
 
-            $data = self::encodeRdata($rr->getType(), $rr->getRdata());
+            $data = self::encodeRdata($rr->getRdata());
             $res .= pack('nnNn', $rr->getType(), $rr->getClass(), $rr->getTtl(), strlen($data));
             $res .= $data;
         }
@@ -160,22 +151,22 @@ class Encoder
     }
 
     /**
-     * @param array $soa
+     * @param Rdata $soa
      *
      * @return string
      */
-    private static function encodeSOA(array $soa): string
+    private static function encodeSOA(Rdata $soa): string
     {
         return
-            self::encodeDomainName($soa['mname']).
-            self::encodeDomainName($soa['rname']).
+            self::encodeDomainName($soa->getMname()).
+            self::encodeDomainName($soa->getRname()).
             pack(
                 'NNNNN',
-                $soa['serial'],
-                $soa['refresh'],
-                $soa['retry'],
-                $soa['expire'],
-                $soa['minimum']
+                $soa->getSerial(),
+                $soa->getRefresh(),
+                $soa->getRetry(),
+                $soa->getExpire(),
+                $soa->getMinimum()
             );
     }
 }

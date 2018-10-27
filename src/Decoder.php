@@ -96,58 +96,60 @@ class Decoder
 
     /**
      * @param int    $type
-     * @param string $rdata
+     * @param string $string
      *
-     * @return array|string|null
+     * @return Rdata
      *
      * @throws UnsupportedTypeException
      */
-    public static function decodeRdata(int $type, string $rdata)
+    public static function decodeRdata(int $type, string $string)
     {
+        $rdata = new Rdata($type);
+
         switch ($type) {
             case RecordTypeEnum::TYPE_A:
             case RecordTypeEnum::TYPE_AAAA:
-                return inet_ntop($rdata);
+                $rdata->setAddress(inet_ntop($string));
+                break;
             case RecordTypeEnum::TYPE_NS:
             case RecordTypeEnum::TYPE_CNAME:
+            case RecordTypeEnum::TYPE_DNAME:
             case RecordTypeEnum::TYPE_PTR:
-                return self::decodeDomainName($rdata);
+                $rdata->setTarget(self::decodeDomainName($string));
+                break;
             case RecordTypeEnum::TYPE_SOA:
                 $offset = 0;
-
-                return array_merge(
-                    [
-                        'mname' => self::decodeDomainName($rdata, $offset),
-                        'rname' => self::decodeDomainName($rdata, $offset),
-                    ],
-                    unpack('Nserial/Nrefresh/Nretry/Nexpire/Nminimum', substr($rdata, $offset))
-                );
+                $rdata->setMname(self::decodeDomainName($string, $offset))
+                    ->setRname(self::decodeDomainName($string, $offset));
+                $values = unpack('Nserial/Nrefresh/Nretry/Nexpire/Nminimum', substr($string, $offset));
+                $rdata->setSerial($values['serial'])
+                    ->setRefresh($values['refresh'])
+                    ->setRetry($values['retry'])
+                    ->setExpire($values['expire'])
+                    ->setMinimum($values['minimum']);
+                break;
             case RecordTypeEnum::TYPE_MX:
-                return [
-                    'preference' => unpack('npreference', $rdata)['preference'],
-                    'exchange' => self::decodeDomainName(substr($rdata, 2)),
-                ];
+                $rdata->setPreference(unpack('npreference', $string)['preference'])
+                    ->setExchange(self::decodeDomainName(substr($string, 2)));
+                break;
             case RecordTypeEnum::TYPE_TXT:
-                $len = ord($rdata[0]);
-                if ((strlen($rdata) + 1) < $len) {
-                    return null;
-                }
-
-                return substr($rdata, 1, $len);
+                $rdata->setText(substr($string, 1, ord($string[0])));
+                break;
             case RecordTypeEnum::TYPE_SRV:
                 $offset = 6;
-                $values = unpack('npriority/nweight/nport', $rdata);
-                $values['target'] = self::decodeDomainName($rdata, $offset);
-
-                return $values;
-            case RecordTypeEnum::TYPE_AXFR:
-            case RecordTypeEnum::TYPE_ANY:
-                return null;
+                $values = unpack('npriority/nweight/nport', $string);
+                $rdata->setPriority($values['priority'])
+                    ->setWeight($values['weight'])
+                    ->setPort($values['port'])
+                    ->setTarget(self::decodeDomainName($string, $offset));
+                break;
             default:
                 throw new UnsupportedTypeException(
                     sprintf('Record type "%s" is not a supported type.', RecordTypeEnum::getName($type))
                 );
         }
+
+        return $rdata;
     }
 
     /**

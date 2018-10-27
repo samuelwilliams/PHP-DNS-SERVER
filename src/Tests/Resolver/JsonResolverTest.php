@@ -2,6 +2,7 @@
 
 namespace yswery\DNS\Tests\Resolver;
 
+use yswery\DNS\Rdata;
 use yswery\DNS\Resolver\JsonResolver;
 use yswery\DNS\ResourceRecord;
 use yswery\DNS\RecordTypeEnum;
@@ -29,9 +30,8 @@ class JsonResolverTest extends AbstractResolverTest
 
         $expectation[] = (new ResourceRecord())
             ->setName('test.com.')
-            ->setType(RecordTypeEnum::TYPE_A)
             ->setTtl(300)
-            ->setRdata('111.111.111.111');
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_A))->setAddress('111.111.111.111'));
 
         $this->assertEquals($expectation, $this->resolver->getAnswer($question));
     }

@@ -2,6 +2,7 @@
 
 namespace yswery\DNS\Resolver;
 
+use yswery\DNS\Rdata;
 use yswery\DNS\ResourceRecord;
 use yswery\DNS\RecordTypeEnum;
 use yswery\DNS\UnsupportedTypeException;
@@ -181,51 +182,53 @@ abstract class AbstractResolver implements ResolverInterface
      * @param int    $type
      * @param string $parent
      *
-     * @return mixed
+     * @return Rdata
      *
      * @throws UnsupportedTypeException
      */
-    protected function extractRdata(array $resourceRecord, int $type, string $parent)
+    protected function extractRdata(array $resourceRecord, int $type, string $parent): Rdata
     {
+        $rdata = new Rdata($type);
+
         switch ($type) {
             case RecordTypeEnum::TYPE_A:
             case RecordTypeEnum::TYPE_AAAA:
-                return $resourceRecord['address'];
+                $rdata->setAddress($resourceRecord['address']);
+                break;
             case RecordTypeEnum::TYPE_NS:
             case RecordTypeEnum::TYPE_CNAME:
+            case RecordTypeEnum::TYPE_DNAME:
             case RecordTypeEnum::TYPE_PTR:
-                return $this->handleName($resourceRecord['target'], $parent);
+                $rdata->setTarget($resourceRecord['target']);
+                break;
             case RecordTypeEnum::TYPE_SOA:
-                return [
-                    'mname' => $this->handleName($resourceRecord['mname'], $parent),
-                    'rname' => $this->handleName($resourceRecord['rname'], $parent),
-                    'serial' => $resourceRecord['serial'],
-                    'refresh' => $resourceRecord['refresh'],
-                    'retry' => $resourceRecord['retry'],
-                    'expire' => $resourceRecord['expire'],
-                    'minimum' => $resourceRecord['minimum'],
-                ];
+                $rdata->setMname($this->handleName($resourceRecord['mname'], $parent))
+                    ->setRname($this->handleName($resourceRecord['rname'], $parent))
+                    ->setSerial($resourceRecord['serial'])
+                    ->setRefresh($resourceRecord['refresh'])
+                    ->setRetry($resourceRecord['retry'])
+                    ->setExpire($resourceRecord['expire'])
+                    ->setMinimum($resourceRecord['minimum']);
+                break;
             case RecordTypeEnum::TYPE_MX:
-                return [
-                    'preference' => $resourceRecord['preference'],
-                    'exchange' => $this->handleName($resourceRecord['exchange'], $parent),
-                ];
+                $rdata->setPreference($resourceRecord['preference'])
+                    ->setExchange($this->handleName($resourceRecord['exchange'], $parent));
+                break;
             case RecordTypeEnum::TYPE_TXT:
-                return $resourceRecord['text'];
+                $rdata->setText($resourceRecord['text']);
+                break;
             case RecordTypeEnum::TYPE_SRV:
-                return [
-                    'priority' => (int) $resourceRecord['priority'],
-                    'weight' => (int) $resourceRecord['weight'],
-                    'port' => (int) $resourceRecord['port'],
-                    'target' => $this->handleName($resourceRecord['target'], $parent),
-                ];
-            case RecordTypeEnum::TYPE_AXFR:
-            case RecordTypeEnum::TYPE_ANY:
-                return '';
+                $rdata->setPriority($resourceRecord['priority'])
+                    ->setWeight($resourceRecord['weight'])
+                    ->setPort($resourceRecord['port'])
+                    ->setTarget($this->handleName($resourceRecord['target'], $parent));
+                break;
             default:
                 throw new UnsupportedTypeException(
                     sprintf('Resource Record type "%s" is not a supported type.', RecordTypeEnum::getName($type))
                 );
         }
+
+        return $rdata;
     }
 }

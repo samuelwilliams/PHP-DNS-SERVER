@@ -12,6 +12,7 @@ namespace yswery\DNS\Tests;
 
 use yswery\DNS\Decoder;
 use yswery\DNS\Encoder;
+use yswery\DNS\Rdata;
 use yswery\DNS\RecordTypeEnum;
 use yswery\DNS\ResourceRecord;
 use PHPUnit\Framework\TestCase;
@@ -95,18 +96,13 @@ class DecoderTest extends TestCase
             ->setName($name)
             ->setClass($class)
             ->setTtl($ttl)
-            ->setType($type)
-            ->setRdata([
-                'preference' => $priority,
-                'exchange' => $exchange,
-            ]);
+            ->setRdata((new Rdata($type))->setPreference($priority)->setExchange($exchange));
 
         $decoded2[] = (new ResourceRecord())
             ->setName($name)
             ->setClass($class)
             ->setTtl($ttl)
-            ->setType(RecordTypeEnum::TYPE_A)
-            ->setRdata($ipAddress);
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_A))->setAddress($ipAddress));
 
         $decoded3 = array_merge($decoded1, $decoded2);
 
@@ -124,24 +120,23 @@ class DecoderTest extends TestCase
      */
     public function testDecodeRdata()
     {
-        $decoded_1 = '192.168.0.1';
-        $encoded_1 = inet_pton($decoded_1);
+        $decoded_1 = (new Rdata(RecordTypeEnum::TYPE_A))->setAddress('192.168.0.1');
+        $encoded_1 = inet_pton($decoded_1->getAddress());
 
-        $decoded_2 = '2001:acad:1337:b8::19';
-        $encoded_2 = inet_pton($decoded_2);
+        $decoded_2 = (new Rdata(RecordTypeEnum::TYPE_AAAA))->setAddress('2001:acad:1337:b8::19');
+        $encoded_2 = inet_pton($decoded_2->getAddress());
 
-        $decoded_5 = 'dns1.example.com.';
+        $decoded_5 = (new Rdata(RecordTypeEnum::TYPE_NS))->setTarget('dns1.example.com.');
         $encoded_5 = chr(4).'dns1'.chr(7).'example'.chr(3).'com'."\0";
 
-        $decoded_6_prime = [
-            'mname' => 'example.com.',
-            'rname' => 'postmaster.example.com.',
-            'serial' => 1970010188,
-            'refresh' => 1800,
-            'retry' => 7200,
-            'expire' => 10800,
-            'minimum' => 3600,
-        ];
+        $decoded_6 = (new Rdata(RecordTypeEnum::TYPE_SOA))
+            ->setMname('example.com.')
+            ->setRname('postmaster.example.com.')
+            ->setSerial(1970010188)
+            ->setRefresh(1800)
+            ->setRetry(7200)
+            ->setExpire(10800)
+            ->setMinimum(3600);
 
         $encoded_6 =
             chr(7).'example'.chr(3).'com'."\0".
@@ -149,19 +144,19 @@ class DecoderTest extends TestCase
             pack('NNNNN', 1970010188, 1800, 7200, 10800, 3600);
 
         $encoded_7 = pack('n', 10).chr(4).'mail'.chr(7).'example'.chr(3).'com'."\0";
-        $decoded_7_prime = [
-            'preference' => 10,
-            'exchange' => 'mail.example.com.',
-        ];
+        $decoded_7 = (new Rdata(RecordTypeEnum::TYPE_MX))
+            ->setPreference(10)
+            ->setExchange('mail.example.com.');
 
-        $decoded_8 = 'This is a comment.';
-        $encoded_8 = chr(strlen($decoded_8)).$decoded_8;
+        $decoded_8 = (new Rdata(RecordTypeEnum::TYPE_TXT))
+            ->setText('This is a comment.');
+        $encoded_8 = chr(strlen($decoded_8->getText())).$decoded_8->getText();
 
         $this->assertEquals($decoded_1, Decoder::decodeRdata(RecordTypeEnum::TYPE_A, $encoded_1));
         $this->assertEquals($decoded_2, Decoder::decodeRdata(RecordTypeEnum::TYPE_AAAA, $encoded_2));
         $this->assertEquals($decoded_5, Decoder::decodeRdata(RecordTypeEnum::TYPE_NS, $encoded_5));
-        $this->assertEquals($decoded_6_prime, Decoder::decodeRdata(RecordTypeEnum::TYPE_SOA, $encoded_6));
-        $this->assertEquals($decoded_7_prime, Decoder::decodeRdata(RecordTypeEnum::TYPE_MX, $encoded_7));
+        $this->assertEquals($decoded_6, Decoder::decodeRdata(RecordTypeEnum::TYPE_SOA, $encoded_6));
+        $this->assertEquals($decoded_7, Decoder::decodeRdata(RecordTypeEnum::TYPE_MX, $encoded_7));
         $this->assertEquals($decoded_8, Decoder::decodeRdata(RecordTypeEnum::TYPE_TXT, $encoded_8));
     }
 
@@ -198,14 +193,13 @@ class DecoderTest extends TestCase
      */
     public function testDecodeSrv()
     {
-        $rdata = [
-            'priority' => 1,
-            'weight' => 5,
-            'port' => 389,
-            'target' => 'ldap.example.com.',
-        ];
+        $rdata = (new Rdata(RecordTypeEnum::TYPE_SRV))
+            ->setPriority(1)
+            ->setWeight(5)
+            ->setPort(389)
+            ->setTarget('ldap.example.com.');
 
-        $encoded = Encoder::encodeRdata(RecordTypeEnum::TYPE_SRV, $rdata);
+        $encoded = Encoder::encodeRdata($rdata);
         $this->assertEquals($rdata, Decoder::decodeRdata(RecordTypeEnum::TYPE_SRV, $encoded));
     }
 }

@@ -10,6 +10,7 @@
 
 namespace yswery\DNS\Tests;
 
+use yswery\DNS\Rdata;
 use yswery\DNS\RecordTypeEnum;
 use yswery\DNS\ResourceRecord;
 use yswery\DNS\Resolver\ResolverInterface;
@@ -39,7 +40,7 @@ class DummyResolver implements ResolverInterface
             ->setName($q->getName())
             ->setClass($q->getClass())
             ->setTtl(300)
-            ->setType(RecordTypeEnum::TYPE_OPT)
-            ->setRdata('Some data'), ];
+            ->setRdata(new Rdata(RecordTypeEnum::TYPE_OPT)),
+        ];
     }
 }

@@ -10,6 +10,7 @@
 
 namespace yswery\DNS\Resolver;
 
+use yswery\DNS\Rdata;
 use yswery\DNS\UnsupportedTypeException;
 use yswery\DNS\ResourceRecord;
 use yswery\DNS\RecordTypeEnum;
@@ -49,8 +50,7 @@ class SystemResolver extends AbstractResolver
                 ->setName($query->getName())
                 ->setClass($query->getClass())
                 ->setTtl($record['ttl'])
-                ->setRdata($record['rdata'])
-                ->setType($query->getType());
+                ->setRdata($record['rdata']);
         }
 
         return $answer;
@@ -80,54 +80,58 @@ class SystemResolver extends AbstractResolver
     }
 
     /**
-     * @param array  $resourceRecord
+     * @param array $resourceRecord
      *
-     * @return array|string
+     * @return Rdata
      *
      * @throws UnsupportedTypeException
      */
-    protected function extractPhpRdata(array $resourceRecord)
+    protected function extractPhpRdata(array $resourceRecord): Rdata
     {
-        $type = RecordTypeEnum::getTypeFromName($resourceRecord['type']);
+        $rdata = new Rdata(RecordTypeEnum::getTypeFromName($resourceRecord['type']));
 
-        switch ($type) {
+        switch ($rdata->getType()) {
             case RecordTypeEnum::TYPE_A:
-                return $resourceRecord['ip'];
+                $rdata->setAddress($resourceRecord['ip']);
+                break;
             case RecordTypeEnum::TYPE_AAAA:
-                return $resourceRecord['ipv6'];
+                $rdata->setAddress($resourceRecord['ipv6']);
+                break;
             case RecordTypeEnum::TYPE_NS:
             case RecordTypeEnum::TYPE_CNAME:
+            case RecordTypeEnum::TYPE_DNAME:
             case RecordTypeEnum::TYPE_PTR:
-                return $resourceRecord['target'];
+                $rdata->setTarget($resourceRecord['target']);
+                break;
             case RecordTypeEnum::TYPE_SOA:
-                return [
-                        'mname' => $resourceRecord['mname'],
-                        'rname' => $resourceRecord['rname'],
-                        'serial' => $resourceRecord['serial'],
-                        'refresh' => $resourceRecord['refresh'],
-                        'retry' => $resourceRecord['retry'],
-                        'expire' => $resourceRecord['expire'],
-                        'minimum' => $resourceRecord['minimum-ttl'],
-                    ];
+                $rdata->setMname($resourceRecord['mname'])
+                    ->setRname($resourceRecord['rname'])
+                    ->setSerial($resourceRecord['serial'])
+                    ->setRefresh($resourceRecord['refresh'])
+                    ->setRetry($resourceRecord['retry'])
+                    ->setExpire($resourceRecord['expire'])
+                    ->setMinimum($resourceRecord['minimum-ttl']);
+                break;
             case RecordTypeEnum::TYPE_MX:
-                return [
-                    'preference' => $resourceRecord['pri'],
-                    'exchange' => $resourceRecord['host'],
-                ];
+                $rdata->setPreference($resourceRecord['pri'])
+                    ->setExchange($resourceRecord['host']);
+                break;
             case RecordTypeEnum::TYPE_TXT:
-                return $resourceRecord['txt'];
+                $rdata->setText($resourceRecord['txt']);
+                break;
             case RecordTypeEnum::TYPE_SRV:
-                return [
-                    'priority' => $resourceRecord['pri'],
-                    'port' => $resourceRecord['port'],
-                    'weight' => $resourceRecord['weight'],
-                    'target' => $resourceRecord['target'],
-                ];
+                $rdata->setPriority($resourceRecord['pri'])
+                    ->setWeight($resourceRecord['weight'])
+                    ->setPort($resourceRecord['port'])
+                    ->setTarget($resourceRecord['target']);
+                break;
             default:
                 throw new UnsupportedTypeException(
-                    sprintf('Record type "%s" is not a supported type.', RecordTypeEnum::getName($type))
+                    sprintf('Resource Record type "%s" is not a supported type.', RecordTypeEnum::getName($type))
                 );
         }
+
+        return $rdata;
     }
 
     /**

@@ -8,6 +8,7 @@ use yswery\DNS\RecordTypeEnum;
 use yswery\DNS\Resolver\JsonResolver;
 use yswery\DNS\Resolver\ResolverInterface;
 use yswery\DNS\ResourceRecord;
+use yswery\DNS\Rdata;
 
 abstract class AbstractResolverTest extends TestCase
 {
@@ -22,23 +23,22 @@ abstract class AbstractResolverTest extends TestCase
             ->setName('example.com.')
             ->setClass(ClassEnum::INTERNET)
             ->setTtl(10800)
-            ->setType(RecordTypeEnum::TYPE_SOA)
-            ->setRdata([
-                'mname' => 'example.com.',
-                'rname' => 'postmaster.example.com.',
-                'serial' => 2,
-                'refresh' => 3600,
-                'retry' => 7200,
-                'expire' => 10800,
-                'minimum' => 3600,
-            ]);
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_SOA))
+                    ->setMname('example.com.')
+                    ->setRname('postmaster.example.com.')
+                    ->setSerial(2)
+                    ->setRefresh(3600)
+                    ->setRetry(7200)
+                    ->setExpire(10800)
+                    ->setMinimum(3600)
+            );
 
         $aaaa = (new ResourceRecord())
             ->setName('example.com.')
             ->setClass(ClassEnum::INTERNET)
             ->setTtl(7200)
             ->setType(RecordTypeEnum::TYPE_AAAA)
-            ->setRdata('2001:acad:ad::32');
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_AAAA))->setAddress('2001:acad:ad::32'));
 
         $soa_query = (new ResourceRecord())
             ->setName('example.com.')
@@ -77,15 +77,13 @@ abstract class AbstractResolverTest extends TestCase
 
         $expectation[] = (new ResourceRecord())
             ->setName('test2.com.')
-            ->setType(RecordTypeEnum::TYPE_A)
             ->setTtl(300)
-            ->setRdata('111.111.111.111');
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_A))->setAddress('111.111.111.111'));
 
         $expectation[] = (new ResourceRecord())
             ->setName('test2.com.')
-            ->setType(RecordTypeEnum::TYPE_A)
             ->setTtl(300)
-            ->setRdata('112.112.112.112');
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_A))->setAddress('112.112.112.112'));
 
         $this->assertEquals($expectation, $this->resolver->getAnswer($question));
     }
@@ -99,9 +97,8 @@ abstract class AbstractResolverTest extends TestCase
 
         $expectation[] = (new ResourceRecord())
             ->setName('badcow.subdomain.example.com.')
-            ->setType(RecordTypeEnum::TYPE_A)
             ->setTtl(7200)
-            ->setRdata('192.168.1.42');
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_A))->setAddress('192.168.1.42'));
 
         $this->assertEquals($expectation, $this->resolver->getAnswer($question));
     }
@@ -137,12 +134,12 @@ abstract class AbstractResolverTest extends TestCase
             ->setName('_ldap._tcp.example.com.')
             ->setType(RecordTypeEnum::TYPE_SRV)
             ->setTtl(7200)
-            ->setRdata([
-                'priority' => 1,
-                'weight' => 5,
-                'port' => 389,
-                'target' => 'ldap.example.com.',
-            ]);
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_SRV))
+                ->setPriority(1)
+                ->setWeight(5)
+                ->setPort(389)
+                ->setTarget('ldap.example.com.')
+            );
 
         $this->assertEquals($expectation, $this->resolver->getAnswer($question));
     }

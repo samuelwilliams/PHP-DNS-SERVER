@@ -173,7 +173,7 @@ class ServerTest extends TestCase
 
         $this->assertEquals(1, $response->getHeader()->getAnswerCount());
         $this->assertEquals(1, $response->getHeader()->getAdditionalRecordsCount());
-        $this->assertEquals('192.168.3.89', $response->getAdditionals()[0]->getRdata());
+        $this->assertEquals('192.168.3.89', $response->getAdditionals()[0]->getRdata()->getAddress());
     }
 
     /**

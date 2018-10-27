@@ -91,6 +91,8 @@ class JsonResolver extends AbstractResolver
      * @param array $zones
      *
      * @return array
+     *
+     * @throws UnsupportedTypeException
      */
     protected function processLegacyZone(array $zones): array
     {
@@ -101,12 +103,26 @@ class JsonResolver extends AbstractResolver
                 $data = (array) $data;
                 $type = RecordTypeEnum::getTypeFromName($type);
                 foreach ($data as $rdata) {
+                    switch ($type) {
+                        case RecordTypeEnum::TYPE_A:
+                        case RecordTypeEnum::TYPE_AAAA:
+                            $rdata = ['address' => $rdata];
+                            break;
+                        case RecordTypeEnum::TYPE_NS:
+                        case RecordTypeEnum::TYPE_CNAME:
+                        case RecordTypeEnum::TYPE_DNAME:
+                        case RecordTypeEnum::TYPE_PTR:
+                            $rdata = ['target' => $rdata];
+                            break;
+                        case RecordTypeEnum::TYPE_TXT:
+                            $rdata = ['text' => $rdata];
+                            break;
+                    }
                     $resourceRecords[] = (new ResourceRecord())
                         ->setName($domain)
-                        ->setType($type)
                         ->setClass($this->defaultClass)
                         ->setTtl($this->defaultTtl)
-                        ->setRdata($rdata);
+                        ->setRdata($this->extractRdata($rdata, $type, $domain));
                 }
             }
         }

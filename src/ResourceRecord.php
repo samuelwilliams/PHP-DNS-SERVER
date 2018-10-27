@@ -28,7 +28,7 @@ class ResourceRecord
     private $ttl;
 
     /**
-     * @var string|array
+     * @var Rdata
      */
     private $rdata;
 
@@ -74,9 +74,14 @@ class ResourceRecord
      * @param int $type
      *
      * @return ResourceRecord
+     *
+     * @throws \LogicException
      */
     public function setType(int $type): ResourceRecord
     {
+        if (isset($this->rdata)) {
+            throw new \LogicException('The Resource Record type can only be set if the Rdata has not been set.');
+        }
         $this->type = $type;
 
         return $this;
@@ -103,7 +108,7 @@ class ResourceRecord
     }
 
     /**
-     * @return array|string
+     * @return Rdata
      */
     public function getRdata()
     {
@@ -111,13 +116,14 @@ class ResourceRecord
     }
 
     /**
-     * @param array|string $rdata
+     * @param Rdata $rdata
      *
      * @return ResourceRecord
      */
-    public function setRdata($rdata): ResourceRecord
+    public function setRdata(Rdata $rdata): ResourceRecord
     {
         $this->rdata = $rdata;
+        $this->type = $rdata->getType();
 
         return $this;
     }

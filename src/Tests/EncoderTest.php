@@ -13,6 +13,7 @@ namespace yswery\DNS\Tests;
 use yswery\DNS\ClassEnum;
 use yswery\DNS\Encoder;
 use yswery\DNS\Header;
+use yswery\DNS\Rdata;
 use yswery\DNS\RecordTypeEnum;
 use yswery\DNS\ResourceRecord;
 use PHPUnit\Framework\TestCase;
@@ -92,16 +93,13 @@ class EncoderTest extends TestCase
             ->setName($name)
             ->setTtl($ttl)
             ->setType(RecordTypeEnum::TYPE_MX)
-            ->setRdata([
-                'preference' => $preference,
-                'exchange' => $exchange,
-            ]);
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_MX))->setPreference($preference)->setExchange($exchange));
 
         $decoded2 = (new ResourceRecord())
             ->setName($name)
             ->setTtl($ttl)
             ->setType(RecordTypeEnum::TYPE_A)
-            ->setRdata($ipAddress);
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_A))->setAddress($ipAddress));
 
         $encoded1 = $nameEncoded.pack('nnNn', $type, $class, $ttl, strlen($rdata)).$rdata;
         $encoded2 = $nameEncoded.pack('nnNn', 1, $class, $ttl, strlen($rdata2)).$rdata2;
@@ -115,46 +113,45 @@ class EncoderTest extends TestCase
      */
     public function testEncodeType()
     {
-        $decoded_1 = '192.168.0.1';
-        $encoded_1 = inet_pton($decoded_1);
+        $decoded_1 = (new Rdata(RecordTypeEnum::TYPE_A))->setAddress('192.168.0.1');
+        $encoded_1 = inet_pton($decoded_1->getAddress());
 
-        $decoded_2 = '2001:acad:1337:b8::19';
-        $encoded_2 = inet_pton($decoded_2);
+        $decoded_2 = (new Rdata(RecordTypeEnum::TYPE_AAAA))->setAddress('2001:acad:1337:b8::19');
+        $encoded_2 = inet_pton($decoded_2->getAddress());
 
-        $decoded_5 = 'dns1.example.com.';
+        $decoded_5 = (new Rdata(RecordTypeEnum::TYPE_NS))->setTarget('dns1.example.com.');
         $encoded_5 = chr(4).'dns1'.chr(7).'example'.chr(3).'com'."\0";
 
-        $decoded_6 = [
-            'mname' => 'example.com.',
-            'rname' => 'postmaster.example.com',
-            'serial' => 1970010188,
-            'refresh' => 1800,
-            'retry' => 7200,
-            'expire' => 10800,
-            'minimum' => 3600,
-        ];
+        $decoded_6 = (new Rdata(RecordTypeEnum::TYPE_SOA))
+            ->setMname('example.com.')
+            ->setRname('postmaster.example.com.')
+            ->setSerial(1970010188)
+            ->setRefresh(1800)
+            ->setRetry(7200)
+            ->setExpire(10800)
+            ->setMinimum(3600);
 
         $encoded_6 =
             chr(7).'example'.chr(3).'com'."\0".
             chr(10).'postmaster'.chr(7).'example'.chr(3).'com'."\0".
             pack('NNNNN', 1970010188, 1800, 7200, 10800, 3600);
 
-        $decoded_7 = [
-            'preference' => 15,
-            'exchange' => 'mail.example.com.',
-        ];
+        $decoded_7 = (new Rdata(RecordTypeEnum::TYPE_MX))
+            ->setPreference(15)
+            ->setExchange('mail.example.com.');
 
         $encoded_7 = pack('n', 15).chr(4).'mail'.chr(7).'example'.chr(3).'com'."\0";
 
-        $decoded_8 = 'This is a comment.';
-        $encoded_8 = chr(18).$decoded_8;
+        $decoded_8 = (new Rdata(RecordTypeEnum::TYPE_TXT))
+            ->setText('This is a comment.');
+        $encoded_8 = chr(18).'This is a comment.';
 
-        $this->assertEquals($encoded_1, Encoder::encodeRdata(1, $decoded_1));
-        $this->assertEquals($encoded_2, Encoder::encodeRdata(28, $decoded_2));
-        $this->assertEquals($encoded_5, Encoder::encodeRdata(2, $decoded_5));
-        $this->assertEquals($encoded_6, Encoder::encodeRdata(6, $decoded_6));
-        $this->assertEquals($encoded_7, Encoder::encodeRdata(15, $decoded_7));
-        $this->assertEquals($encoded_8, Encoder::encodeRdata(16, $decoded_8));
+        $this->assertEquals($encoded_1, Encoder::encodeRdata($decoded_1));
+        $this->assertEquals($encoded_2, Encoder::encodeRdata($decoded_2));
+        $this->assertEquals($encoded_5, Encoder::encodeRdata($decoded_5));
+        $this->assertEquals($encoded_6, Encoder::encodeRdata($decoded_6));
+        $this->assertEquals($encoded_7, Encoder::encodeRdata($decoded_7));
+        $this->assertEquals($encoded_8, Encoder::encodeRdata($decoded_8));
     }
 
     /**
@@ -162,7 +159,7 @@ class EncoderTest extends TestCase
      */
     public function testInvalidIpv4()
     {
-        Encoder::encodeRdata(RecordTypeEnum::TYPE_A, '192.168.1');
+        (new Rdata(RecordTypeEnum::TYPE_A))->setAddress('192.168.1');
     }
 
     /**
@@ -170,7 +167,7 @@ class EncoderTest extends TestCase
      */
     public function testInvalidIpv6()
     {
-        Encoder::encodeRdata(RecordTypeEnum::TYPE_AAAA, '2001:acad:1337:b8:19');
+        (new Rdata(RecordTypeEnum::TYPE_AAAA))->setAddress('2001:acad:1337:b8:19');
     }
 
     public function testEncodeHeader()

@@ -3,6 +3,7 @@
 namespace yswery\DNS\Tests\Resolver;
 
 use Symfony\Component\Yaml\Exception\ParseException;
+use yswery\DNS\Rdata;
 use yswery\DNS\Resolver\YamlResolver;
 use yswery\DNS\ResourceRecord;
 use yswery\DNS\RecordTypeEnum;
@@ -41,19 +42,19 @@ class YamlResolverTest extends AbstractResolverTest
             ->setName('test2.com.')
             ->setType(RecordTypeEnum::TYPE_MX)
             ->setTtl(300)
-            ->setRdata([
-                'preference' => 20,
-                'exchange' => 'mail-gw1.test2.com.',
-            ]);
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_MX))
+                ->setPreference(20)
+                ->setExchange('mail-gw1.test2.com.')
+            );
 
         $expectation[] = (new ResourceRecord())
             ->setName('test2.com.')
             ->setType(RecordTypeEnum::TYPE_MX)
             ->setTtl(300)
-            ->setRdata([
-                'preference' => 30,
-                'exchange' => 'mail-gw2.test2.com.',
-            ]);
+            ->setRdata((new Rdata(RecordTypeEnum::TYPE_MX))
+                ->setPreference(30)
+                ->setExchange('mail-gw2.test2.com.')
+            );
 
         $this->assertEquals($expectation, $this->resolver->getAnswer($question));
     }
