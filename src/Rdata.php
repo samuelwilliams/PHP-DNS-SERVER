@@ -496,4 +496,22 @@ class Rdata
             );
         }
     }
+
+    /**
+     * @return string
+     * @throws \ReflectionException
+     */
+    public function __toString()
+    {
+        $reflection = new \ReflectionClass(__CLASS__);
+        $string = '(';
+        foreach ($reflection->getProperties() as $property) {
+            $name = $property->getName();
+            if ('type' !== $name && null !== $this->{$name}) {
+                $string .= $property->getName().': '.$this->{$name}.', ';
+            }
+        }
+
+        return rtrim($string, ', ').')';
+    }
 }

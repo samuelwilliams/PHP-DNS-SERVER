@@ -173,23 +173,13 @@ class ResourceRecord
      */
     public function __toString()
     {
-        if (is_array($this->rdata)) {
-            $rdata = '(';
-            foreach ($this->rdata as $key => $value) {
-                $rdata .= $key.': '.$value.', ';
-            }
-            $rdata = rtrim($rdata, ', ').')';
-        } else {
-            $rdata = $this->rdata;
-        }
-
         return sprintf(
             '%s %s %s %s %s',
             $this->name,
             RecordTypeEnum::getName($this->type),
             ClassEnum::getName($this->class),
             $this->ttl,
-            $rdata
+            (string) $this->rdata
         );
     }
 }
