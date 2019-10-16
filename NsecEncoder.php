@@ -46,8 +46,8 @@ class NsecEncoder
 
     private static function addToWindowBlocks(int $int, array &$windowBlocks)
     {
-        $window = self::getWindow($int);
-        $pos = self::getBitToFlip($int);
+        $window = $int >> 8; //self::getWindow($int);
+        $pos = $int & 0b11111111; //self::getBitToFlip($int);
 
         if (!array_key_exists($window, $windowBlocks)) {
             $windowBlocks[$window] = '0';
@@ -76,16 +76,45 @@ class NsecEncoder
             $encoded .= $block.$mask;
         }
 
-        return $encoded;
+        $bytes = array_map('bindec', str_split($encoded, 8));
+
+        return pack('C*', ...$bytes);
     }
 }
 
 $types = [1,15,46,47,1234];
 $encoded = NsecEncoder::encode($types);
 
-$encoded = str_split($encoded, 8);
+$bytes = unpack('C*', $encoded);
 
-foreach ($encoded as $hextet) {
-    $hextet = bindec('0b'.$hextet);
-    echo '0x'.str_pad(dechex($hextet), 2, '0', STR_PAD_LEFT) . ' ';
+foreach ($bytes as $byte) {
+    echo '0x'.dechex($byte).' ';
 }
+//var_dump($bytes);
+$iterator = new \ArrayIterator($bytes);
+
+$blockWindows = [];
+
+while ($iterator->valid()) {
+    $window = $iterator->current();
+    $mask = '';
+
+    $iterator->next();
+    $len = $iterator->current();
+    $nextWindow = $iterator->key() + $len;
+
+    $iterator->next();
+
+    echo "$len, $nextWindow\n";
+
+    for ($i=0;$i<$len;$i++) {
+        $mask .= str_pad(decbin($iterator->current()), 8, '0', STR_PAD_LEFT);
+        $iterator->next();
+    }
+
+    $blockWindows[$window] = $mask;
+}
+
+
+
+var_dump($blockWindows);
