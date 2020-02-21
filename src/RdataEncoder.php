@@ -11,6 +11,8 @@
 
 namespace yswery\DNS;
 
+use yswery\DNS\Resolver\ArrayRdata;
+
 class RdataEncoder
 {
     private static $methodMap = [
@@ -32,10 +34,14 @@ class RdataEncoder
      *
      * @return string
      *
-     * @throws UnsupportedTypeException|\InvalidArgumentException
+     * @throws \Exception
      */
     public static function encodeRdata(int $type, $rdata): string
     {
+        if ($rdata instanceof ArrayRdata) {
+            return $rdata->getBadcowRdata()->toWire();
+        }
+
         if (!array_key_exists($type, self::$methodMap)) {
             throw new UnsupportedTypeException(
                 sprintf('Record type "%s" is not a supported type.', RecordTypeEnum::getName($type))
