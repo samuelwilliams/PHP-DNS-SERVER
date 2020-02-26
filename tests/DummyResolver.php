@@ -12,8 +12,8 @@
 namespace yswery\DNS\Tests;
 
 use yswery\DNS\RecordTypeEnum;
-use yswery\DNS\ResourceRecord;
 use yswery\DNS\Resolver\ResolverInterface;
+use yswery\DNS\ResourceRecord;
 
 class DummyResolver implements ResolverInterface
 {
@@ -29,8 +29,6 @@ class DummyResolver implements ResolverInterface
 
     /**
      * @param ResourceRecord[] $queries
-     *
-     * @return array
      */
     public function getAnswer(array $queries, ?string $client = null): array
     {

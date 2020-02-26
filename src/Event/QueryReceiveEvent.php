@@ -11,8 +11,8 @@
 
 namespace yswery\DNS\Event;
 
-use yswery\DNS\Message;
 use Symfony\Component\EventDispatcher\Event;
+use yswery\DNS\Message;
 
 class QueryReceiveEvent extends Event
 {
@@ -23,17 +23,12 @@ class QueryReceiveEvent extends Event
 
     /**
      * QueryReceiveEvent constructor.
-     *
-     * @param Message $message
      */
     public function __construct(Message $message)
     {
         $this->message = $message;
     }
 
-    /**
-     * @return Message
-     */
     public function getMessage(): Message
     {
         return $this->message;

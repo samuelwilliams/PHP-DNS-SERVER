@@ -23,17 +23,12 @@ class ServerStartEvent extends Event
 
     /**
      * ServerStartEvent constructor.
-     *
-     * @param SocketInterface $socket
      */
     public function __construct(SocketInterface $socket)
     {
         $this->socket = $socket;
     }
 
-    /**
-     * @return SocketInterface
-     */
     public function getSocket(): SocketInterface
     {
         return $this->socket;

@@ -13,11 +13,6 @@ namespace yswery\DNS;
 
 class Decoder
 {
-    /**
-     * @param string $message
-     *
-     * @return Message
-     */
     public static function decodeMessage(string $message): Message
     {
         $offset = 0;
@@ -31,12 +26,6 @@ class Decoder
         return $messageObject;
     }
 
-    /**
-     * @param string $string
-     * @param int    $offset
-     *
-     * @return string
-     */
     public static function decodeDomainName(string $string, int &$offset = 0): string
     {
         $len = ord($string[$offset]);
@@ -58,10 +47,8 @@ class Decoder
     }
 
     /**
-     * @param string $pkt
-     * @param int    $offset
-     * @param int    $count      The number of resource records to decode
-     * @param bool   $isQuestion Is the resource record from the question section
+     * @param int  $count      The number of resource records to decode
+     * @param bool $isQuestion Is the resource record from the question section
      *
      * @return ResourceRecord[]
      */
@@ -99,12 +86,6 @@ class Decoder
         return $resourceRecords;
     }
 
-    /**
-     * @param string $pkt
-     * @param int    $offset
-     *
-     * @return Header
-     */
     public static function decodeHeader(string $pkt, int &$offset = 0): Header
     {
         $data = unpack('nid/nflags/nqdcount/nancount/nnscount/narcount', $pkt);
@@ -129,8 +110,6 @@ class Decoder
 
     /**
      * @param string $flags
-     *
-     * @return array
      */
     private static function decodeFlags($flags): array
     {

@@ -84,8 +84,6 @@ class FilesystemManager
     }
 
     /**
-     * @param string $zone
-     *
      * @return JsonFileSystemResolver
      *
      * @throws \yswery\DNS\UnsupportedTypeException

@@ -11,7 +11,6 @@
 
 namespace yswery\DNS\Event;
 
-use React\Datagram\Socket;
 use React\Datagram\SocketInterface;
 
 class MessageEvent extends ServerStartEvent
@@ -28,10 +27,6 @@ class MessageEvent extends ServerStartEvent
 
     /**
      * MessageEvent constructor.
-     *
-     * @param SocketInterface $socket
-     * @param string          $remote
-     * @param string          $message
      */
     public function __construct(SocketInterface $socket, string $remote, string $message)
     {
@@ -40,17 +35,11 @@ class MessageEvent extends ServerStartEvent
         $this->message = $message;
     }
 
-    /**
-     * @return string
-     */
     public function getRemote(): string
     {
         return $this->remote;
     }
 
-    /**
-     * @return string
-     */
     public function getMessage(): string
     {
         return $this->message;

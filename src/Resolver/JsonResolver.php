@@ -31,8 +31,7 @@ class JsonResolver extends AbstractResolver
     /**
      * JsonResolver constructor.
      *
-     * @param array $files
-     * @param int   $defaultTtl
+     * @param int $defaultTtl
      *
      * @throws UnsupportedTypeException
      */
@@ -50,8 +49,6 @@ class JsonResolver extends AbstractResolver
     }
 
     /**
-     * @param array $zone
-     *
      * @return ResourceRecord[]
      *
      * @throws UnsupportedTypeException
@@ -80,10 +77,6 @@ class JsonResolver extends AbstractResolver
 
     /**
      * Determine if a $zone is in the legacy format.
-     *
-     * @param array $zone
-     *
-     * @return bool
      */
     protected function isLegacyFormat(array $zone): bool
     {
@@ -96,11 +89,6 @@ class JsonResolver extends AbstractResolver
             (false === array_search('resource-records', $keys, true));
     }
 
-    /**
-     * @param array $zones
-     *
-     * @return array
-     */
     protected function processLegacyZone(array $zones): array
     {
         $resourceRecords = [];

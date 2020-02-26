@@ -32,8 +32,6 @@ class ClassEnum
      * Determine if a class is valid.
      *
      * @param string $class
-     *
-     * @return bool
      */
     public static function isValid($class): bool
     {
@@ -41,8 +39,6 @@ class ClassEnum
     }
 
     /**
-     * @param int $class
-     *
      * @return mixed
      *
      * @throws \InvalidArgumentException
@@ -56,11 +52,6 @@ class ClassEnum
         return self::$classes[$class];
     }
 
-    /**
-     * @param string $name
-     *
-     * @return int
-     */
     public static function getClassFromName(string $name): int
     {
         $class = array_search(strtoupper($name), self::$classes, true);

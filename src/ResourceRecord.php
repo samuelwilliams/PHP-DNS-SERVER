@@ -43,19 +43,11 @@ class ResourceRecord
      */
     private $question = false;
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return ResourceRecord
-     */
     public function setName(string $name): ResourceRecord
     {
         $this->name = $name;
@@ -63,19 +55,11 @@ class ResourceRecord
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return $this->type;
     }
 
-    /**
-     * @param int $type
-     *
-     * @return ResourceRecord
-     */
     public function setType(int $type): ResourceRecord
     {
         $this->type = $type;
@@ -83,19 +67,11 @@ class ResourceRecord
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getTtl(): int
     {
         return $this->ttl;
     }
 
-    /**
-     * @param int $ttl
-     *
-     * @return ResourceRecord
-     */
     public function setTtl(int $ttl): ResourceRecord
     {
         $this->ttl = $ttl;
@@ -113,8 +89,6 @@ class ResourceRecord
 
     /**
      * @param array|string $rdata
-     *
-     * @return ResourceRecord
      */
     public function setRdata($rdata): ResourceRecord
     {
@@ -123,19 +97,11 @@ class ResourceRecord
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getClass(): int
     {
         return $this->class;
     }
 
-    /**
-     * @param int $class
-     *
-     * @return ResourceRecord
-     */
     public function setClass(int $class): ResourceRecord
     {
         $this->class = $class;
@@ -143,19 +109,11 @@ class ResourceRecord
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function isQuestion(): bool
     {
         return $this->question;
     }
 
-    /**
-     * @param bool $question
-     *
-     * @return ResourceRecord
-     */
     public function setQuestion(bool $question): ResourceRecord
     {
         $this->question = $question;

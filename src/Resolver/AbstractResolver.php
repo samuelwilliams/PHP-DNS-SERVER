@@ -11,8 +11,8 @@
 
 namespace yswery\DNS\Resolver;
 
-use yswery\DNS\ResourceRecord;
 use yswery\DNS\RecordTypeEnum;
+use yswery\DNS\ResourceRecord;
 use yswery\DNS\UnsupportedTypeException;
 
 abstract class AbstractResolver implements ResolverInterface
@@ -47,8 +47,6 @@ abstract class AbstractResolver implements ResolverInterface
 
     /**
      * @param ResourceRecord[] $queries
-     *
-     * @return array
      */
     public function getAnswer(array $queries, ?string $client = null): array
     {
@@ -91,10 +89,6 @@ abstract class AbstractResolver implements ResolverInterface
 
     /**
      * Determine if a domain is a wildcard domain.
-     *
-     * @param string $domain
-     *
-     * @return bool
      */
     public function isWildcardDomain(string $domain): bool
     {
@@ -120,8 +114,6 @@ abstract class AbstractResolver implements ResolverInterface
 
     /**
      * Add a wildcard ResourceRecord.
-     *
-     * @param ResourceRecord $resourceRecord
      */
     protected function addWildcardRecord(ResourceRecord $resourceRecord): void
     {
@@ -139,11 +131,6 @@ abstract class AbstractResolver implements ResolverInterface
         }
     }
 
-    /**
-     * @param ResourceRecord $query
-     *
-     * @return array
-     */
     protected function findWildcardEntry(ResourceRecord $query): array
     {
         $labels = explode('.', rtrim($query->getName(), '.'));
@@ -199,10 +186,6 @@ abstract class AbstractResolver implements ResolverInterface
     }
 
     /**
-     * @param array  $resourceRecord
-     * @param int    $type
-     * @param string $parent
-     *
      * @return mixed
      *
      * @throws UnsupportedTypeException
@@ -245,9 +228,7 @@ abstract class AbstractResolver implements ResolverInterface
             case RecordTypeEnum::TYPE_ANY:
                 return '';
             default:
-                throw new UnsupportedTypeException(
-                    sprintf('Resource Record type "%s" is not a supported type.', RecordTypeEnum::getName($type))
-                );
+                throw new UnsupportedTypeException(sprintf('Resource Record type "%s" is not a supported type.', RecordTypeEnum::getName($type)));
         }
     }
 }

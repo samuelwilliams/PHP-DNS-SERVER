@@ -100,11 +100,6 @@ class RecordTypeEnum
     public const TYPE_URI = 256;
     public const TYPE_DNAME = 39;
 
-    /**
-     * @param int $type
-     *
-     * @return bool
-     */
     public static function isValid(int $type): bool
     {
         return array_key_exists($type, self::$names);
@@ -114,8 +109,6 @@ class RecordTypeEnum
      * Get the name of an RDATA type. E.g. RecordTypeEnum::getName(6) return 'SOA'.
      *
      * @param int $type The index of the type
-     *
-     * @return string
      *
      * @throws \InvalidArgumentException
      */
@@ -132,8 +125,6 @@ class RecordTypeEnum
      * Return the integer value of an RDATA type. E.g. getTypeFromName('MX') returns 15.
      *
      * @param string $name The name of the record type, e.g. = 'A' or 'MX' or 'SOA'
-     *
-     * @return int
      *
      * @throws \InvalidArgumentException
      */

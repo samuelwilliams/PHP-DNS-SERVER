@@ -32,9 +32,6 @@ class RdataDecoder
     ];
 
     /**
-     * @param int    $type
-     * @param string $rdata
-     *
      * @return array|string
      *
      * @throws UnsupportedTypeException
@@ -42,9 +39,7 @@ class RdataDecoder
     public static function decodeRdata(int $type, string $rdata)
     {
         if (!array_key_exists($type, self::$methodMap)) {
-            throw new UnsupportedTypeException(
-                sprintf('Record type "%s" is not a supported type.', RecordTypeEnum::getName($type))
-            );
+            throw new UnsupportedTypeException(sprintf('Record type "%s" is not a supported type.', RecordTypeEnum::getName($type)));
         }
 
         return call_user_func(['self', self::$methodMap[$type]], $rdata);
@@ -52,10 +47,6 @@ class RdataDecoder
 
     /**
      * Used for A and AAAA records.
-     *
-     * @param string $rdata
-     *
-     * @return string
      */
     public static function a(string $rdata): string
     {
@@ -64,10 +55,6 @@ class RdataDecoder
 
     /**
      * Used for CNAME, DNAME, NS, and PTR records.
-     *
-     * @param string $rdata
-     *
-     * @return string
      */
     public static function cname(string $rdata): string
     {
@@ -76,10 +63,6 @@ class RdataDecoder
 
     /**
      * Exclusively for SOA records.
-     *
-     * @param string $rdata
-     *
-     * @return array
      */
     public static function soa(string $rdata): array
     {
@@ -96,10 +79,6 @@ class RdataDecoder
 
     /**
      * Exclusively for MX records.
-     *
-     * @param string $rdata
-     *
-     * @return array
      */
     public static function mx(string $rdata): array
     {
@@ -111,10 +90,6 @@ class RdataDecoder
 
     /**
      * Exclusively for TXT records.
-     *
-     * @param string $rdata
-     *
-     * @return string
      */
     public static function txt(string $rdata): string
     {
@@ -128,10 +103,6 @@ class RdataDecoder
 
     /**
      * Exclusively for SRV records.
-     *
-     * @param string $rdata
-     *
-     * @return array
      */
     public static function srv(string $rdata): array
     {

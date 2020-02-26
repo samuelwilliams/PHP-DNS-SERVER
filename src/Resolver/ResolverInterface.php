@@ -29,8 +29,6 @@ interface ResolverInterface
 
     /**
      * Returns true if resolver supports recursion.
-     *
-     * @return bool
      */
     public function allowsRecursion(): bool;
 
@@ -39,8 +37,6 @@ interface ResolverInterface
      * Returns true if the resolver holds info about $domain.
      *
      * @param string $domain The domain to check for
-     *
-     * @return bool
      */
     public function isAuthority($domain): bool;
 }

@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * This file is part of PHP DNS Server.
+ *
+ * (c) Yif Swery <yiftachswr@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace yswery\DNS\Resolver;
-
 
 use Badcow\DNS\Parser\ParseException;
 use Badcow\DNS\Parser\Parser;
@@ -14,7 +21,7 @@ class BindResolver extends AbstractResolver
 {
     /**
      * BindResolver constructor.
-     * @param array $files
+     *
      * @throws ParseException
      */
     public function __construct(array $files)
@@ -40,8 +47,6 @@ class BindResolver extends AbstractResolver
     /**
      * Converts Badcow\DNS\ResourceRecord object to yswery\DNS\ResourceRecord object.
      *
-     * @param BadcowRR $badcowResourceRecord
-     * @param bool $isQuestion
      * @return ResourceRecord
      */
     public static function convertResourceRecord(BadcowRR $badcowResourceRecord, bool $isQuestion = false): ResourceRecord

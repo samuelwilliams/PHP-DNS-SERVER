@@ -1,13 +1,20 @@
 <?php
 
+/*
+ * This file is part of PHP DNS Server.
+ *
+ * (c) Yif Swery <yiftachswr@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace yswery\DNS\Tests\Resolver;
 
-
 use Badcow\DNS\Parser\ParseException;
-use yswery\DNS\Resolver\BindResolver;
 use yswery\DNS\RdataEncoder;
 use yswery\DNS\RecordTypeEnum;
+use yswery\DNS\Resolver\BindResolver;
 use yswery\DNS\ResourceRecord;
 
 class BindResolverTest extends AbstractResolverTest
@@ -15,10 +22,11 @@ class BindResolverTest extends AbstractResolverTest
     /**
      * @throws ParseException
      */
-   public function setUp()
+    public function setUp()
     {
         $files = [
             __DIR__.'/../Resources/example.com.db',
+            __DIR__.'/../Resources/test2.com.db',
         ];
         $this->resolver = new BindResolver($files);
     }
@@ -28,7 +36,7 @@ class BindResolverTest extends AbstractResolverTest
      */
     public function testResolver()
     {
-        $files = [__DIR__ . '/../Resources/example.com-2.db'];
+        $files = [__DIR__.'/../Resources/example.com-2.db'];
         $resolver = new BindResolver($files);
 
         $query = new ResourceRecord();

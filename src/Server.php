@@ -14,18 +14,18 @@ namespace yswery\DNS;
 use React\Datagram\Socket;
 use React\Datagram\SocketInterface;
 use React\EventLoop\LoopInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use yswery\DNS\Config\FileConfig;
-use yswery\DNS\Event\ServerExceptionEvent;
+use yswery\DNS\Event\Events;
 use yswery\DNS\Event\MessageEvent;
 use yswery\DNS\Event\QueryReceiveEvent;
 use yswery\DNS\Event\QueryResponseEvent;
+use yswery\DNS\Event\ServerExceptionEvent;
 use yswery\DNS\Event\ServerStartEvent;
+use yswery\DNS\Filesystem\FilesystemManager;
 use yswery\DNS\Resolver\JsonFileSystemResolver;
 use yswery\DNS\Resolver\ResolverInterface;
-use yswery\DNS\Event\Events;
-use yswery\DNS\Filesystem\FilesystemManager;
 
 class Server
 {
@@ -87,10 +87,6 @@ class Server
      * @param ResolverInterface        $resolver
      * @param EventDispatcherInterface $dispatcher
      * @param FileConfig               $config
-     * @param string|null              $storageDirectory
-     * @param bool                     $useFilesystem
-     * @param string                   $ip
-     * @param int                      $port
      *
      * @throws \Exception
      */
@@ -146,10 +142,6 @@ class Server
 
     /**
      * This methods gets called each time a query is received.
-     *
-     * @param string          $message
-     * @param string          $address
-     * @param SocketInterface $socket
      */
     public function onMessage(string $message, string $address, SocketInterface $socket)
     {
@@ -163,10 +155,6 @@ class Server
 
     /**
      * Decode a message and return an encoded response.
-     *
-     * @param string $buffer
-     *
-     * @return string
      *
      * @throws UnsupportedTypeException
      */
@@ -198,33 +186,21 @@ class Server
         }
     }
 
-    /**
-     * @return EventDispatcherInterface
-     */
     public function getDispatcher(): EventDispatcherInterface
     {
         return $this->dispatcher;
     }
 
-    /**
-     * @return ResolverInterface
-     */
     public function getResolver(): ResolverInterface
     {
         return $this->resolver;
     }
 
-    /**
-     * @return int
-     */
     public function getPort(): int
     {
         return $this->port;
     }
 
-    /**
-     * @return string
-     */
     public function getIp(): string
     {
         return $this->ip;
@@ -232,8 +208,6 @@ class Server
 
     /**
      * Populate the additional records of a message if required.
-     *
-     * @param Message $message
      */
     protected function needsAdditionalRecords(Message $message): void
     {
@@ -275,8 +249,6 @@ class Server
 
     /**
      * @param ResourceRecord[] $query
-     *
-     * @return bool
      */
     protected function isAuthoritative(array $query): bool
     {
@@ -293,10 +265,7 @@ class Server
     }
 
     /**
-     * @param string     $eventName
-     * @param Event|null $event
-     *
-     * @return Event|null
+     * @param string $eventName
      */
     protected function dispatch($eventName, ?Event $event = null): ?Event
     {

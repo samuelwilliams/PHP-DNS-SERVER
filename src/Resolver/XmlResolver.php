@@ -12,8 +12,8 @@
 namespace yswery\DNS\Resolver;
 
 use yswery\DNS\ClassEnum;
-use yswery\DNS\ResourceRecord;
 use yswery\DNS\RecordTypeEnum;
+use yswery\DNS\ResourceRecord;
 use yswery\DNS\UnsupportedTypeException;
 
 class XmlResolver extends AbstractResolver
@@ -22,8 +22,6 @@ class XmlResolver extends AbstractResolver
 
     /**
      * XmlResolver constructor.
-     *
-     * @param array $files
      *
      * @throws UnsupportedTypeException
      */
@@ -69,10 +67,6 @@ class XmlResolver extends AbstractResolver
 
     /**
      * Convert a SimpleXML object to an associative array.
-     *
-     * @param \SimpleXMLElement $xmlObject
-     *
-     * @return array
      */
     private function simpleXmlToArray(\SimpleXMLElement $xmlObject): array
     {

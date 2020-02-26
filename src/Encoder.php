@@ -14,10 +14,6 @@ namespace yswery\DNS;
 class Encoder
 {
     /**
-     * @param Message $message
-     *
-     * @return string
-     *
      * @throws UnsupportedTypeException
      */
     public static function encodeMessage(Message $message): string
@@ -34,8 +30,6 @@ class Encoder
      * Encode a domain name as a sequence of labels.
      *
      * @param $domain
-     *
-     * @return string
      */
     public static function encodeDomainName($domain): string
     {
@@ -56,8 +50,6 @@ class Encoder
     /**
      * @param ResourceRecord[] $resourceRecords
      *
-     * @return string
-     *
      * @throws UnsupportedTypeException
      */
     public static function encodeResourceRecords(array $resourceRecords): string
@@ -68,10 +60,6 @@ class Encoder
     }
 
     /**
-     * @param ResourceRecord $rr
-     *
-     * @return string
-     *
      * @throws UnsupportedTypeException
      */
     public static function encodeResourceRecord(ResourceRecord $rr): string
@@ -87,11 +75,6 @@ class Encoder
         return $encoded.$data;
     }
 
-    /**
-     * @param Header $header
-     *
-     * @return string
-     */
     public static function encodeHeader(Header $header): string
     {
         return pack(
@@ -107,10 +90,6 @@ class Encoder
 
     /**
      * Encode the bit field of the Header between "ID" and "QDCOUNT".
-     *
-     * @param Header $header
-     *
-     * @return int
      */
     private static function encodeFlags(Header $header): int
     {

@@ -11,19 +11,19 @@
 
 namespace yswery\DNS\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use yswery\DNS\ClassEnum;
 use yswery\DNS\Decoder;
+use yswery\DNS\Encoder;
 use yswery\DNS\Header;
 use yswery\DNS\Message;
 use yswery\DNS\RecordTypeEnum;
-use yswery\DNS\Encoder;
+use yswery\DNS\Resolver\JsonResolver;
 use yswery\DNS\Resolver\StackableResolver;
 use yswery\DNS\Resolver\XmlResolver;
 use yswery\DNS\ResourceRecord;
 use yswery\DNS\Server;
-use yswery\DNS\Resolver\JsonResolver;
-use PHPUnit\Framework\TestCase;
 
 class ServerTest extends TestCase
 {
@@ -73,8 +73,6 @@ class ServerTest extends TestCase
 
     /**
      * Create a mock query and response pair.
-     *
-     * @return array
      */
     private function mockQueryAndResponse(): array
     {

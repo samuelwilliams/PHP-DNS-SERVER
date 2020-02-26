@@ -22,17 +22,12 @@ class ServerExceptionEvent extends Event
 
     /**
      * ExceptionEvent constructor.
-     *
-     * @param \Exception $exception
      */
     public function __construct(\Exception $exception)
     {
         $this->exception = $exception;
     }
 
-    /**
-     * @return \Exception
-     */
     public function getException(): \Exception
     {
         return $this->exception;

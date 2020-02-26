@@ -22,8 +22,7 @@ class YamlResolver extends JsonResolver
     /**
      * YamlResolver constructor.
      *
-     * @param array $files
-     * @param int   $defaultTtl
+     * @param int $defaultTtl
      *
      * @throws UnsupportedTypeException
      */

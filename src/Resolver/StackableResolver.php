@@ -27,8 +27,6 @@ class StackableResolver implements ResolverInterface
 
     /**
      * @param ResourceRecord[] $question
-     *
-     * @return array
      */
     public function getAnswer(array $question, ?string $client = null): array
     {

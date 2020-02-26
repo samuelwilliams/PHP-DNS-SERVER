@@ -40,8 +40,6 @@ class Message
 
     /**
      * Message constructor.
-     *
-     * @param Header|null $header
      */
     public function __construct(Header $header = null)
     {
@@ -55,19 +53,11 @@ class Message
         $this->setHeader($header);
     }
 
-    /**
-     * @return Header
-     */
     public function getHeader(): Header
     {
         return $this->header;
     }
 
-    /**
-     * @param Header $header
-     *
-     * @return Message
-     */
     public function setHeader(Header $header): Message
     {
         $this->header = $header;
@@ -84,11 +74,7 @@ class Message
     }
 
     /**
-     * @param ResourceRecord $resourceRecord
-     *
      * @throws \InvalidArgumentException
-     *
-     * @return Message
      */
     public function addQuestion(ResourceRecord $resourceRecord): Message
     {
@@ -110,11 +96,6 @@ class Message
         return $this->answers;
     }
 
-    /**
-     * @param ResourceRecord $resourceRecord
-     *
-     * @return Message
-     */
     public function addAnswer(ResourceRecord $resourceRecord): Message
     {
         $this->answers[] = $resourceRecord;
@@ -131,11 +112,6 @@ class Message
         return $this->authoritatives;
     }
 
-    /**
-     * @param ResourceRecord $resourceRecord
-     *
-     * @return Message
-     */
     public function addAuthoritative(ResourceRecord $resourceRecord): Message
     {
         $this->authoritatives[] = $resourceRecord;
@@ -152,11 +128,6 @@ class Message
         return $this->additionals;
     }
 
-    /**
-     * @param ResourceRecord $resourceRecord
-     *
-     * @return Message
-     */
     public function addAdditional(ResourceRecord $resourceRecord): Message
     {
         $this->additionals[] = $resourceRecord;
@@ -165,11 +136,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @param array $resourceRecords
-     *
-     * @return Message
-     */
     public function setQuestions(array $resourceRecords): Message
     {
         $this->questions = [];
@@ -180,11 +146,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @param array $resourceRecords
-     *
-     * @return Message
-     */
     public function setAnswers(array $resourceRecords): Message
     {
         $this->answers = $resourceRecords;
@@ -193,11 +154,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @param array $resourceRecords
-     *
-     * @return Message
-     */
     public function setAuthoritatives(array $resourceRecords): Message
     {
         $this->authoritatives = $resourceRecords;
@@ -206,11 +162,6 @@ class Message
         return $this;
     }
 
-    /**
-     * @param array $resourceRecords
-     *
-     * @return Message
-     */
     public function setAdditionals(array $resourceRecords): Message
     {
         $this->additionals = $resourceRecords;
