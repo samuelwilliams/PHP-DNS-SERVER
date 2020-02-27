@@ -38,7 +38,7 @@
         "symfony/filesystem": "^4.3",
         "symfony/console": "^4.3",
         "vanilla/garden-cli": "^2.2",
-        "badcow/dns": ">=3.3",
+        "badcow/dns": "^3.4",
         "symfony/property-access": ">=4.0"
     },
     "autoload": {
